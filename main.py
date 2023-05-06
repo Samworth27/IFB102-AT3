@@ -1,12 +1,13 @@
 try:
+    import RPi.RPIO as RPIO
+    rp = True
+except:
+    rp = False
+finally:
     from seven_seg.driver import SevenSegment
     from NN.network import Network
     from camera.camera import Camera
     import cv2 as cv
-    import RPi.RPIO
-    rp = True
-except:
-    rp = False
 
 print(f"Running on a pi: {rp}")
 
