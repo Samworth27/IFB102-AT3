@@ -17,7 +17,7 @@ class GPIO:
 
     @staticmethod
     def output(pin, value):
-        print(f"GPIO pin {pin} set to {value}")
+        print(f"GPIO pin {pin:02} set to {value}")
 
     @staticmethod
     def cleanup(self, *args):
