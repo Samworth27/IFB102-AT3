@@ -4,7 +4,6 @@ from .dropout import input_mask, output_mask
 
 class FullyConnectedLayer(Layer):
     def __init__(self,input_size,output_size):
-        print("Init FC layer")
         self.weights = np.random.rand(input_size,output_size) - 0.5
         self.bias = np.random.rand(1,output_size) - 0.5
         self.dropout_mask = np.array([True for _ in range(input_size)])
