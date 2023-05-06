@@ -9,4 +9,3 @@ Initial work, some activation functions and node dropout
 
 Class designs
 [https://towardsdatascience.com/math-neural-network-from-scratch-in-python-d6da9f29ce65]
-

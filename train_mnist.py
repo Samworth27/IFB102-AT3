@@ -1,12 +1,11 @@
 import numpy as np
-import pickle
 
 from NN.network import Network
 from NN.functions import activation_functions, loss_functions, output_functions
 from NN.layers import FullyConnectedLayer, ActivationLayer
 from NN.layers.activation_layer import ActivationLayer
 
-from one_hot import one_hot
+from NN.functions.one_hot import one_hot
 
 from MNIST_data.mnist_data import get_train_data, get_test_data
 
