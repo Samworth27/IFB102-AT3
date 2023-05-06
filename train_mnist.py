@@ -8,7 +8,7 @@ from NN.layers.activation_layer import ActivationLayer
 
 from one_hot import one_hot
 
-from mnist_data import get_train_data, get_test_data
+from MNIST_data.mnist_data import get_train_data, get_test_data
 
 x_train, y_train = get_train_data()
 x_train = x_train.reshape(x_train.shape[0],1,28*28)

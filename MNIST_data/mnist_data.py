@@ -2,13 +2,16 @@ import os
 import csv
 import numpy as np
 import pickle
+from .retrieve_data import retrieve_data
 
 base_path = os.path.abspath(os.path.dirname(__file__))
 data_dir  = 'MNIST_data'
 
 def read_csv(file):
-
-    with open(os.path.join(base_path,data_dir,file)) as file:
+    if not(os.path.exists('./train.csv') and os.path.exists('./test.csv')):
+        retrieve_data()
+        
+    with open(os.path.join(base_path,file)) as file:
         data_reader = csv.reader(file)
         data = [i for i in data_reader]
         number_samples = len(data)-1
@@ -17,11 +20,11 @@ def read_csv(file):
         return x,y
     
 def pickle_dump(data,file_name):
-    with open(os.path.join(base_path,data_dir,file_name),'wb') as file:
-        pickle_data = pickle.dump(data,file)
+    with open(os.path.join(base_path,file_name),'wb') as file:
+        pickle.dump(data,file)
     
 def read_pickle(file_name):
-    with open(os.path.join(base_path,data_dir,file_name),'rb') as file:
+    with open(os.path.join(base_path,file_name),'rb') as file:
         return pickle.load(file)
 
 def get_train_data()-> tuple[np.array,np.array]:
