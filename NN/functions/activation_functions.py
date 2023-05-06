@@ -21,4 +21,4 @@ class ReLU(ActivationFunction):
         return np.maximum(0.0,x)
     
     def prime(self,x):
-        return 0 if x <= 0 else 1
+        return np.where(x<=0,0,1)
