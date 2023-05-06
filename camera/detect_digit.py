@@ -15,7 +15,6 @@ def detect_digit(frame):
     
     for contour in contours:
         x, y, width, height = cv.boundingRect(contour)
-        print(x,y,width,height)
         half_width = width//2
         half_height = height//2
         x_centre = x+half_width

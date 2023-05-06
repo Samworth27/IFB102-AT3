@@ -3,8 +3,8 @@
 import numpy as np
 import cv2 as cv
 
-from detect_digit import detect_digit
-from pad_image import pad_image
+from .detect_digit import detect_digit
+from .pad_image import pad_image
 
 class Camera:
     def __init__(self):
@@ -14,26 +14,41 @@ class Camera:
             exit()
         self.frame_size = (700,700)
         
-    def capture(self):
+    def capture_continuous(self):
         while True:
             # Capture frame-by-frame
-            ret, frame = self.cap.read()
-            # if frame is read correctly ret is True
-            if not ret:
+            captured, detected, digit, annotated = self.capture()
+            if not captured:
                 print("Can't receive frame (stream end?). Exiting ...")
                 break
 
-            ret, digit, annotated = detect_digit(frame)
-
-            if ret is False:
+            if not detected:
                 digit = np.zeros((28,28)).astype(np.uint8)           
             
-            cv.imshow('frame', np.concatenate((pad_image(annotated, *self.frame_size), pad_image(
-                digit, *self.frame_size, 1)), axis=1))
+            self.display_capture(digit,annotated)
             
             if cv.waitKey(1) == ord('q'):
                 break
+            
         # When everything done, release the capture
+        self.exit()
+        
+    def capture(self):
+        ret, frame = self.cap.read()
+        if not ret:
+                print("Can't receive frame (stream end?). Exiting ...")
+                return False, False, None, None
+        ret, digit, annotated = detect_digit(frame)
+        if ret is False:
+                digit = np.zeros((28,28)).astype(np.uint8)
+        return True, ret, digit, annotated
+    
+    def display_capture(self,digit,annotated):
+        cv.imshow('frame', np.concatenate((pad_image(annotated, *self.frame_size), pad_image(
+                digit, *self.frame_size, 1)), axis=1))
+            
+        
+    def exit(self):
         self.cap.release()
         cv.destroyAllWindows()
 
