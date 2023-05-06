@@ -20,7 +20,10 @@ cam = Camera()
 # cam.capture_continuous()
 while True:
     captured, detected, digit, annotated = cam.capture()
-    cam.display_capture(digit, annotated)
+    try:
+        cam.display_capture(digit, annotated)
+    except:
+        pass
     predicted = network.predict([digit.reshape((1, 28*28))])[0]
     sevseg.display(predicted)
     if cv.waitKey(1) == ord('q'):
