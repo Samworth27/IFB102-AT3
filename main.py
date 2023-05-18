@@ -8,6 +8,7 @@ finally:
     from NN.network import Network
     from camera.camera import Camera
     import cv2 as cv
+    import statistics
 
 print(f"Running on a pi: {rp}")
 
@@ -18,6 +19,7 @@ network = Network()
 network.load_network('net1')
 cam = Camera()
 # cam.capture_continuous()
+results = [0]
 while True:
     captured, detected, digit, annotated = cam.capture()
     try:
@@ -25,7 +27,12 @@ while True:
     except:
         pass
     predicted = network.predict([digit.reshape((1, 28*28))])[0]
-    sevseg.display(predicted)
+    if len(results) > 100:
+        results.pop(0)
+    results.append(predicted)
+    outcome = statistics.mean(results)
+    sevseg.display(outcome)
+    print(outcome)
     if cv.waitKey(1) == ord('q'):
         break
 cam.exit()
