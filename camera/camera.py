@@ -8,7 +8,7 @@ from .pad_image import pad_image
 
 class Camera:
     def __init__(self):
-        self.cap = cv.VideoCapture("/dev/video2")
+        self.cap = cv.VideoCapture(0)
         if not self.cap.isOpened():
             print("Cannot open camera")
             exit()
