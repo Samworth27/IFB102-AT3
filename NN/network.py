@@ -60,6 +60,7 @@ class Network:
             display_error = 0
             self.dropout(0.3)
             for j in range(samples):
+                print(f"{j}/ {samples}\r",end="\r")
                 # forward propagation
                 output = x_train[j]
 
