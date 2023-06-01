@@ -5,12 +5,14 @@ class OutputFunction:
         raise NotImplementedError
     
 class ArgMax(OutputFunction):
-    def output(self, x):
+    @staticmethod
+    def output(x):
         x = np.array(x)
         return x.argmax()
     
 class Pass(OutputFunction):
-    def output(self,x):
+    @staticmethod
+    def output(x):
         return x
     
     

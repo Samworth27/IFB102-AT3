@@ -2,16 +2,18 @@
 
 import numpy as np
 import cv2 as cv
+from imutils.video import VideoStream
 
 from .detect_digit import detect_digit
 from .pad_image import pad_image
 
 class Camera:
     def __init__(self):
-        self.cap = cv.VideoCapture(0)
-        if not self.cap.isOpened():
-            print("Cannot open camera")
-            exit()
+        # self.cap = cv.VideoCapture(0)
+        self.cap = VideoStream(usePiCamera=False).start()
+        # if not self.cap.isOpened():
+        #     print("Cannot open camera")
+        #     exit()
         self.frame_size = (700,700)
         
     def capture_continuous(self):
@@ -34,7 +36,9 @@ class Camera:
         self.exit()
         
     def capture(self):
-        ret, frame = self.cap.read()
+        # ret, frame = self.cap.read()
+        frame = self.cap.read()
+        ret = True
         if not ret:
                 print("Can't receive frame (stream end?). Exiting ...")
                 return False, False, None, None
@@ -49,26 +53,5 @@ class Camera:
             
         
     def exit(self):
-        self.cap.release()
+        self.cap.stop()
         cv.destroyAllWindows()
-
-
-# old capture code
-# digit_normalised = cv.normalize(
-#     digit, None, 0, 1.0, cv.NORM_MINMAX, dtype=cv.CV_32F)
-
-# gray_normalised = cv.normalize(
-#     annotated, None, 0, 1.0, cv.NORM_MINMAX, dtype=cv.CV_32F)
-
-# squared = square_image(digit_normalised)
-
-#     max_size = min(min(gray.shape),max(normalised.shape))
-#     print(max_size)
-#     square = padding(normalised, max_size,max_size, mode='minimum')
-# else:
-#     square = normalised
-
-# Display the resulting frame
-# row_1 = np.concatenate((blur, threshold, dilate), axis=1)
-# row_2 = np.concatenate(
-#     (padding(ROI, *gray.shape), padding(normalised, *gray.shape), gray_annotated), axis=1)

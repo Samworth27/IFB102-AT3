@@ -1,4 +1,4 @@
-from seven_seg.driver import SevenSegment
+from SevenSeg.driver import SevenSegment
 from time import sleep
 import numpy as np
 

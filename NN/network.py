@@ -79,6 +79,24 @@ class Network:
             display_error /= samples
             print(f"Epoch {i+1}/ {epochs} error: {display_error:.6f}")
             
+    
+    def test(self,x_test, y_test):
+        y_pred = []
+        for data in x_test:
+            y_pred.append(self.predict(data))
+        return sum([true == pred for true,pred in zip(y_test,y_pred)])/len(y_test)
+            
+            
+    def train_batch(self,train_data, test_data, epochs,learning_rate, batch_size):
+        x_train, y_train = train_data
+        x_test, y_test = test_data
+        for i in range(epochs):
+            selection = np.random.choice(len(x_train),batch_size)
+            x_train = x_train[selection]
+            y_train = y_train[selection]
+            self.train(x_train,y_train,1,learning_rate)
+            test_results = self.test(x_test, y_test)
+            print(f"test results: {test_results}")
     def save_network(self, file_name):
         try:
             data = {

@@ -28,9 +28,9 @@ network.add(MaxPooling(2))
 network.add(SoftMax(13*13*16,10))
 
 network.use_loss(loss_functions.MSE())
-network.use_output(output_functions.Pass)
+network.use_output(output_functions.ArgMax)
 
-network.train(x_train,y_train_oh,20,0.3)
+network.train_batch(x_train,y_train_oh,10,0.3,1000)
 
 network.save_network('conv_net1')
 
