@@ -85,6 +85,9 @@ def segment_test():
 
 @app.route("/run_network")
 def run_network():
+    t = threading.Thread(target=detect_digit)
+    t.daemon = True
+    t.start()
     return render_template("network.html")
 
 @app.route("/video_feed")
@@ -98,9 +101,7 @@ if __name__ == "__main__":
     ap.add_argument("-0", "--port", type=int, required=True, help="port of server")
     args = vars(ap.parse_args())
 
-    t = threading.Thread(target=detect_digit)
-    t.daemon = True
-    t.start()
+
 
     app.run(
         host=args["ip"],
