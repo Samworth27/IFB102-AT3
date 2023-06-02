@@ -50,6 +50,30 @@ class Network:
 
         return np.array(result)
 
+    
+    def train_iteration(self,x_train,y_train,learning_rate):
+        samples = len(x_train)
+        display_error = 0
+        for j in range(samples):
+            print(f"{j}/ {samples}\r",end="\r")
+            # forward propagation
+            output = x_train[j]
+
+            for layer in self.layers:
+                output = layer.forwards(output)
+
+            # compute loss (for display purpose only)
+            display_error += self.loss(y_train[j], output)
+
+            # backward propagation
+            error = self.loss_prime(y_train[j], output)
+            for layer in reversed(self.layers):
+                error = layer.backwards(error, learning_rate)
+
+        # calculate average error on all samples
+        display_error /= samples
+        return display_error
+            
     # train the network
     def train(self, x_train, y_train, epochs, learning_rate):
         # sample dimension first
@@ -59,52 +83,34 @@ class Network:
         for i in range(epochs):
             display_error = 0
             self.dropout(0.3)
-            for j in range(samples):
-                print(f"{j}/ {samples}\r",end="\r")
-                # forward propagation
-                output = x_train[j]
-
-                for layer in self.layers:
-                    output = layer.forwards(output)
-
-                # compute loss (for display purpose only)
-                display_error += self.loss(y_train[j], output)
-
-                # backward propagation
-                error = self.loss_prime(y_train[j], output)
-                for layer in reversed(self.layers):
-                    error = layer.backwards(error, learning_rate)
-
-            # calculate average error on all samples
-            display_error /= samples
+            display_error = self.train_iteration(x_train,y_train,learning_rate)
             print(f"Epoch {i+1}/ {epochs} error: {display_error:.6f}")
             
     
     def test(self,x_test, y_test):
         y_pred = []
+        self.dropout(0)
         for data in x_test:
             y_pred.append(self.predict(data))
         return sum([true == pred for true,pred in zip(y_test,y_pred)])/len(y_test)
             
             
-    def train_batch(self,train_data, test_data, epochs,learning_rate, batch_size):
+    def train_batch(self,train_data, test_data, epochs,learning_rate, batch_size, test_interval = 5):
         x_train, y_train = train_data
         x_test, y_test = test_data
         for i in range(epochs):
             selection = np.random.choice(len(x_train),batch_size)
             x_train = x_train[selection]
             y_train = y_train[selection]
-            self.train(x_train,y_train,1,learning_rate)
-            test_results = self.test(x_test, y_test)
-            print(f"test results: {test_results}")
+            error = self.train_iteration(x_train,y_train,learning_rate)
+            print(f"epoch {i+1}/ {epochs} | error: {error:06}")
+            if (i+1) % test_interval == 0:
+                test_results = self.test(x_test, y_test)
+                print(f"test results: {test_results[0]*100:06}% accuracy")
+            
     def save_network(self, file_name):
         try:
-            data = {
-                'layers': self.layers,
-                'output_function': self.output_function,
-                'loss': self.loss,
-                'loss_prime': self.loss_prime
-            }
+            data = self
             self.dropout(0)
             base_dir = os.path.abspath(os.path.dirname(__file__))
             data_dir = "saved_networks"
@@ -114,21 +120,20 @@ class Network:
                 with open(full_file_path, 'xb') as file:
                     pickle.dump(data,file)
             except:
-                with open(full_file_path,'wb') as file:
+                with open(full_file_path,'w+b') as file:
                     pickle.dump(data,file)
+            print(f"{file_name} saved")
         except:
             print("Could not save")
         
-    
-    def load_network(self, file_name):
+    @staticmethod
+    def load_network(file_name):
         base_dir = os.path.abspath(os.path.dirname(__file__))
         data_dir = "saved_networks"
         file_name = f"{file_name}.pkl"
         full_file_path = os.path.join(base_dir,data_dir,file_name)
         with open(full_file_path, 'rb') as file:
             data = pickle.load(file)
+            
+        return data
         
-        self.layers = data['layers']
-        self.output_function = data['output_function']
-        self.loss = data['loss']
-        self.loss_prime = data['loss_prime']

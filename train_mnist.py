@@ -37,7 +37,7 @@ except:
 
 train_data = (x_train,y_train_oh)
 test_data = (x_test, y_test)
-network.train_batch(train_data, test_data,10,0.1,10000)
+network.train_batch(train_data, test_data,100,0.05,10000)
 
 network.save_network('net2')
 

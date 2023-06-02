@@ -23,20 +23,16 @@ finally:
 outputFrame = None
 lock = threading.Lock()
 cam = Camera()
+sevseg = SevenSegment(7, 11, 13, 15)
 app = Flask(__name__)
 
 
-@app.route("/")
-def index():
-    return render_template("index.html")
-
-
 def detect_digit():
-    global cam, outputFrame, lock
-    sevseg = SevenSegment(7, 11, 13, 15)
+    global cam, outputFrame, lock, sevseg
+    
 
-    network = Network()
-    network.load_network("net2")
+
+    network=Network.load_network("net2")
 
     while True:
         captured, detected, digit, annotated = cam.capture()
@@ -44,7 +40,6 @@ def detect_digit():
             predicted = network.predict([digit.reshape((1, 28 * 28))])[0]
             # predicted = network.predict([digit.reshape((28, 28))])[0]
             sevseg.display(predicted)
-            print(predicted)
             cv.putText(
                 annotated,
                 f"Predicted Value: {predicted}",
@@ -78,6 +73,19 @@ def generate():
                 b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + bytearray(encodedImage) + b"\r\n"
             )
 
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+@app.route("/segment_test")
+def segment_test():
+    global sevseg
+    sevseg.test(2,2)
+    return render_template("index.html")
+
+@app.route("/run_network")
+def run_network():
+    return render_template("network.html")
 
 @app.route("/video_feed")
 def video_feed():
